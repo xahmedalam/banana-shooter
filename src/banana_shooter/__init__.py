@@ -13,7 +13,9 @@ def main() -> None:
     y = 50
     width = 40
     height = 60
-    vel = 100
+    vel = 10
+    is_jumping = False
+    jump_count = 10
 
     running = True
 
@@ -32,11 +34,25 @@ def main() -> None:
         if keys[pygame.K_RIGHT]:
             x += vel
 
-        if keys[pygame.K_UP]:
-            y -= vel
+        if not is_jumping:
+            if keys[pygame.K_UP]:
+                y -= vel
 
-        if keys[pygame.K_DOWN]:
-            y += vel
+            if keys[pygame.K_DOWN]:
+                y += vel
+
+            if keys[pygame.K_SPACE]:
+                is_jumping = True
+        else:
+            if jump_count >= -10:
+                neg = 1
+                if jump_count < 0:
+                    neg = -1
+                y -= (jump_count**2) * 0.5 * neg
+                jump_count -= 1
+            else:
+                is_jumping = False
+                jump_count = 10
 
         # Clamping
         # Logic: if x is greater then 500 - 40 = 460 then x = 500 - 40 = 460 means maximum 460
