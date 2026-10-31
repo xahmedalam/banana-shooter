@@ -39,18 +39,12 @@ def main() -> None:
             y += vel
 
         # Clamping
-        # Logic: if x is greater than 500 - 40 = 460 then x = 500 - 40 = 460 means maximum 460
-        if x > win_width - width:
-            x = win_width - width
-
-        if x < 0:
-            x = 0
-
-        if y > win_height - height:
-            y = win_height - height
-
-        if y < 0:
-            y = 0
+        # Logic: if x is greater then 500 - 40 = 460 then x = 500 - 40 = 460 means maximum 460
+        x = min(x, win_width - width)
+        # Logic: if x is less-then 0 then x = 0
+        x = max(x, 0)
+        y = min(y, win_height - height)
+        y = max(y, 0)
 
         # Repainting the window means erasing past positioned drawings
         win.fill((0, 0, 0))
