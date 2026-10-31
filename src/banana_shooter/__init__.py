@@ -1,21 +1,30 @@
 import pygame
 
+win_width = 500
+win_height = 500
+player_x = 100
+player_y = 400
+player_width = 40
+player_height = 60
+player_velocity = 20
+
+
+def paintWindow(win: pygame.Surface) -> None:
+    # Repainting the window means erasing past positioned drawings
+    win.fill((0, 0, 0))
+    # Drawing a rectangle
+    pygame.draw.rect(
+        win, (255, 0, 0), (player_x, player_y, player_width, player_height)
+    )
+    pygame.display.update()
+
 
 def main() -> None:
+    global player_x, player_y
     pygame.init()
-    win_width = 500
-    win_height = 500
 
     win = pygame.display.set_mode((win_width, win_height))
     pygame.display.set_caption("Banana Shooter")
-
-    x = 50
-    y = 50
-    width = 40
-    height = 60
-    vel = 10
-    is_jumping = False
-    jump_count = 10
 
     running = True
 
@@ -29,43 +38,19 @@ def main() -> None:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
-            x -= vel
+            player_x -= player_velocity
 
         if keys[pygame.K_RIGHT]:
-            x += vel
-
-        if not is_jumping:
-            if keys[pygame.K_UP]:
-                y -= vel
-
-            if keys[pygame.K_DOWN]:
-                y += vel
-
-            if keys[pygame.K_SPACE]:
-                is_jumping = True
-        else:
-            if jump_count >= -10:
-                neg = 1
-                if jump_count < 0:
-                    neg = -1
-                y -= (jump_count**2) * 0.5 * neg
-                jump_count -= 1
-            else:
-                is_jumping = False
-                jump_count = 10
+            player_x += player_velocity
 
         # Clamping
         # Logic: if x is greater then 500 - 40 = 460 then x = 500 - 40 = 460 means maximum 460
-        x = min(x, win_width - width)
+        player_x = min(player_x, win_width - player_width)
         # Logic: if x is less-then 0 then x = 0
-        x = max(x, 0)
-        y = min(y, win_height - height)
-        y = max(y, 0)
+        player_x = max(player_x, 0)
+        player_y = min(player_y, win_height - player_height)
+        player_y = max(player_y, 0)
 
-        # Repainting the window means erasing past positioned drawings
-        win.fill((0, 0, 0))
-        # Drawing a rectangle
-        pygame.draw.rect(win, (255, 0, 0), (x, y, width, height))
-        pygame.display.update()
+        paintWindow(win)
 
     pygame.quit()
