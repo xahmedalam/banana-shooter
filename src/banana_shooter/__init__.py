@@ -16,6 +16,7 @@ player_y = 398
 player_width = 64
 player_height = 64
 player_velocity = 30
+is_player_direction_left = False
 
 # Animation vars
 player_idle_active_frame_index = 0
@@ -29,7 +30,12 @@ def paint_window(win: pygame.Surface) -> None:
 
     # Player
     win.blit(
-        player_idle_sprite_sheet[player_idle_active_frame_index], (player_x, player_y)
+        pygame.transform.flip(
+            player_idle_sprite_sheet[player_idle_active_frame_index],
+            is_player_direction_left,
+            False,
+        ),
+        (player_x, player_y),
     )
 
     # Player
@@ -45,7 +51,7 @@ def paint_window(win: pygame.Surface) -> None:
 
 
 def main() -> None:
-    global player_x, player_idle_active_frame_index
+    global player_x, player_idle_active_frame_index, is_player_direction_left
     pygame.init()
 
     win = pygame.display.set_mode((win_width, win_height))
@@ -66,9 +72,11 @@ def main() -> None:
 
         if keys[pygame.K_LEFT]:
             player_x -= player_velocity
+            is_player_direction_left = True
 
         if keys[pygame.K_RIGHT]:
             player_x += player_velocity
+            is_player_direction_left = False
 
         # Clamping
         # Logic: if x is greater then 500 - 40 = 460 then x = 500 - 40 = 460 means maximum 460
