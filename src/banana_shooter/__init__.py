@@ -7,19 +7,27 @@ bg_image = pygame.image.load("src/assets/bg.png")
 player_idle_sprite_sheet = create_sprite_sheet(
     "src/assets/monkey-idle-strip5.png", 5, 32, 64
 )
+player_walk_sprite_sheet = create_sprite_sheet(
+    "src/assets/monkey-walk-strip6.png", 6, 32, 64
+)
 
 # Config
 win_width = 512
 win_height = 512
+game_fps = 30
 player_x = 100
 player_y = 398
 player_width = 64
 player_height = 64
-player_velocity = 30
+player_velocity = 10
 is_player_direction_left = False
+is_player_walking = False
 
 # Animation vars
+player_idle_animation_speed = 1.5
+player_walk_animation_speed = 2
 player_idle_active_frame_index = 0
+player_walk_active_frame_index = 0
 
 
 def paint_window(win: pygame.Surface) -> None:
@@ -28,15 +36,26 @@ def paint_window(win: pygame.Surface) -> None:
     # Background
     win.blit(pygame.transform.scale(bg_image, (win_width, win_height)), (0, 0))
 
-    # Player
-    win.blit(
-        pygame.transform.flip(
-            player_idle_sprite_sheet[player_idle_active_frame_index],
-            is_player_direction_left,
-            False,
-        ),
-        (player_x, player_y),
-    )
+    if not is_player_walking:
+        # Player idle
+        win.blit(
+            pygame.transform.flip(
+                player_idle_sprite_sheet[player_idle_active_frame_index],
+                is_player_direction_left,
+                False,
+            ),
+            (player_x, player_y),
+        )
+    else:
+        # Player walking
+        win.blit(
+            pygame.transform.flip(
+                player_walk_sprite_sheet[player_walk_active_frame_index],
+                is_player_direction_left,
+                False,
+            ),
+            (player_x, player_y),
+        )
 
     # Player
     # monkey = player_idle_sprite_sheet.subsurface((32 * 1, 0, 32, 32))
@@ -51,18 +70,25 @@ def paint_window(win: pygame.Surface) -> None:
 
 
 def main() -> None:
-    global player_x, player_idle_active_frame_index, is_player_direction_left
+    global \
+        player_x, \
+        player_idle_active_frame_index, \
+        player_walk_active_frame_index, \
+        is_player_direction_left, \
+        is_player_walking
     pygame.init()
+    clock = pygame.time.Clock()
 
     win = pygame.display.set_mode((win_width, win_height))
     pygame.display.set_caption("Banana Shooter")
 
-    last_change = pygame.time.get_ticks()
+    player_idle_last_change = pygame.time.get_ticks()
+    player_walk_last_change = pygame.time.get_ticks()
 
     running = True
 
     while running:
-        pygame.time.delay(50)
+        clock.tick(game_fps)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -78,6 +104,8 @@ def main() -> None:
             player_x += player_velocity
             is_player_direction_left = False
 
+        is_player_walking = keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]
+
         # Clamping
         # Logic: if x is greater then 500 - 40 = 460 then x = 500 - 40 = 460 means maximum 460
         player_x = min(player_x, win_width - player_width)
@@ -85,13 +113,25 @@ def main() -> None:
         player_x = max(player_x, 0)
 
         # Player idle animation
-        # Simply frame += 1 on every 150ms
-        if pygame.time.get_ticks() - last_change >= 150:
+        # Simply frame += 1 on every 200ms / speed
+        if (pygame.time.get_ticks() - player_idle_last_change) >= (
+            1000 / 5
+        ) / player_idle_animation_speed:
             player_idle_active_frame_index += 1
             # Back to 0 if frames end
-            if player_idle_active_frame_index == len(player_idle_sprite_sheet) - 1:
+            if player_idle_active_frame_index == len(player_idle_sprite_sheet):
+                # print(player_idle_active_frame_index)
                 player_idle_active_frame_index = 0
-            last_change = pygame.time.get_ticks()
+            player_idle_last_change = pygame.time.get_ticks()
+        # Player walk animation
+        if (pygame.time.get_ticks() - player_walk_last_change) >= (
+            1000 / 6
+        ) / player_walk_animation_speed:
+            player_walk_active_frame_index += 1
+            # Back to 0 if frames end
+            if player_walk_active_frame_index == len(player_walk_sprite_sheet):
+                player_walk_active_frame_index = 0
+            player_walk_last_change = pygame.time.get_ticks()
 
         paint_window(win)
 
