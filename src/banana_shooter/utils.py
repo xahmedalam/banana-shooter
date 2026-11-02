@@ -30,3 +30,12 @@ def create_sprite_sheet(
         sprite_sheet.append(pygame.transform.scale(img, (scale_size, scale_size)))
 
     return sprite_sheet
+
+
+def load_image(src: str, scale_size: tuple[int, int] | None) -> pygame.Surface:
+    img = pygame.image.load(src)
+
+    if scale_size:
+        return pygame.transform.scale(img, scale_size)
+    else:
+        return img
