@@ -1,5 +1,6 @@
 import pygame
 
+from .bullet import Bullet
 from .player import Player
 from .utils import load_image
 
@@ -17,6 +18,9 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.player = Player(self.win, 100, 398, 64, 64, 10)
+        self.bullets: list[Bullet] = []
+        self.rate_of_fire = 2
+        self.bullet_last_change = pygame.time.get_ticks()
 
     def run(self):
         self.running = True
@@ -30,12 +34,28 @@ class Game:
 
             keys = pygame.key.get_pressed()
 
+            # Player
             if keys[pygame.K_LEFT]:
                 self.player.go_left()
             elif keys[pygame.K_RIGHT]:
                 self.player.go_right()
 
             self.player.is_walking = keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]
+
+            # Fire Bullet
+            if (
+                keys[pygame.K_SPACE]
+                and pygame.time.get_ticks() - self.bullet_last_change
+                >= 1000 / self.rate_of_fire
+            ):
+                bullet = Bullet(self.win, self.player.x + 32, self.player.y, 16, 16, 15)
+                self.bullets.append(bullet)
+                self.bullet_last_change = pygame.time.get_ticks()
+
+            # Destroy Bullet
+            for index, bullet in enumerate(self.bullets):
+                if bullet.y <= 0 - bullet.height:
+                    self.bullets.pop(index)
 
             self.paint()
 
@@ -50,6 +70,11 @@ class Game:
         )
         # Player
         self.player.draw()
+
+        # Bullet
+        for bullet in self.bullets:
+            bullet.draw()
+
         # Update display
         pygame.display.update()
 
