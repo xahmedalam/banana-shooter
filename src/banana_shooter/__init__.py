@@ -1,6 +1,9 @@
+import random
+
 import pygame
 
 from .bullet import Bullet
+from .enemy import Enemy
 from .player import Player
 from .utils import load_image
 
@@ -17,10 +20,23 @@ class Game:
         self.win = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
 
-        self.player = Player(self.win, 100, 398, 64, 64, 10)
+        # Settings
+        self.player_velocity = 15
+        self.bullet_velocity = 10
+        self.enemy_velocity = 3
+        self.rate_of_fire = 2  # Fires per second
+        self.rate_of_enemies = 0.6  # Enemies per second
+
+        # Player init
+        self.player = Player(self.win, 100, 398, 64, 64, self.player_velocity)
+
+        # Bullets
         self.bullets: list[Bullet] = []
-        self.rate_of_fire = 2
         self.bullet_last_change = pygame.time.get_ticks()
+
+        # Enemies
+        self.enemies: list[Enemy] = []
+        self.enemy_last_change = pygame.time.get_ticks()
 
     def run(self):
         self.running = True
@@ -48,14 +64,36 @@ class Game:
                 and pygame.time.get_ticks() - self.bullet_last_change
                 >= 1000 / self.rate_of_fire
             ):
-                bullet = Bullet(self.win, self.player.x + 32, self.player.y, 16, 16, 15)
+                bullet = Bullet(
+                    self.win,
+                    self.player.x + 32,
+                    self.player.y,
+                    24,
+                    24,
+                    self.bullet_velocity,
+                )
                 self.bullets.append(bullet)
                 self.bullet_last_change = pygame.time.get_ticks()
 
-            # Destroy Bullet
+            # Cleanup: destroy bullet if out off window
             for index, bullet in enumerate(self.bullets):
                 if bullet.y <= 0 - bullet.height:
                     self.bullets.pop(index)
+
+            # Enemy: add an enemy on every 1000ms / rate_of_enemy
+            if (
+                pygame.time.get_ticks() - self.enemy_last_change
+                >= 1000 / self.rate_of_enemies
+            ):
+                random_x = random.randint(32, self.width - 32)
+                enemy = Enemy(self.win, random_x, -32, 32, 32, self.enemy_velocity)
+                self.enemies.append(enemy)
+                self.enemy_last_change = pygame.time.get_ticks()
+
+            # Cleanup: destroy enemy if out off window
+            for index, enemy in enumerate(self.enemies):
+                if enemy.y >= self.height:
+                    self.enemies.pop(index)
 
             self.paint()
 
@@ -70,6 +108,10 @@ class Game:
         )
         # Player
         self.player.draw()
+
+        # Enemy
+        for enemy in self.enemies:
+            enemy.draw()
 
         # Bullet
         for bullet in self.bullets:
