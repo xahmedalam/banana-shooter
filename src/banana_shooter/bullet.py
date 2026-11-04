@@ -1,6 +1,6 @@
 import pygame
 
-from .utils import load_image
+from .utils import create_sprite_sheet
 
 
 class Bullet:
@@ -20,9 +20,28 @@ class Bullet:
         self.height = height
         self.velocity = velocity
         # Sprite
-        self.sprite = load_image("src/assets/banana.png", (self.width, self.height))
+        self.strip_count = 17
+        self.sprite = create_sprite_sheet(
+            "src/assets/banana-idle-strip17.png", self.strip_count, (32, 32), None
+        )
+        # Animation vars
+        self.sprite_animation_speed = 17
+        self.sprite_current_frame_index = 0
+        self.sprite_last_change = pygame.time.get_ticks()
 
     def draw(self):
-        self.win.blit(self.sprite, (self.x, self.y))
+        # Draw sprite current frame
+        self.win.blit(self.sprite[self.sprite_current_frame_index], (self.x, self.y))
         # Fire up
         self.y -= self.velocity
+
+        # Animation
+        if (
+            pygame.time.get_ticks() - self.sprite_last_change
+            >= (1000 / self.strip_count) / self.sprite_animation_speed
+        ):
+            self.sprite_current_frame_index += 1
+            # Back to 0 if frames end
+            if self.sprite_current_frame_index == self.strip_count:
+                self.sprite_current_frame_index = 0
+            self.sprite_last_change = pygame.time.get_ticks()
