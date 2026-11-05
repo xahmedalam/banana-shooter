@@ -95,6 +95,17 @@ class Game:
                 if enemy.y >= self.height:
                     self.enemies.pop(index)
 
+            # Destroy when bullet and enemy collides
+            for bullet_index, bullet in enumerate(self.bullets):
+                # Check 1 bullet on all enemies
+                for enemy_index, enemy in enumerate(self.enemies):
+                    # If bullet touch the enemy then remove both
+                    if bullet.collision.colliderect(enemy.collision):
+                        self.bullets.pop(bullet_index)
+                        self.enemies.pop(enemy_index)
+                        # Skip left enemies check for this bullet
+                        break
+
             self.paint()
 
         pygame.quit()

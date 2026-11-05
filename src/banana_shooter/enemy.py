@@ -31,12 +31,16 @@ class Enemy:
         self.sprite_animation_speed = 6
         self.sprite_current_frame_index = 0
         self.sprite_last_change = pygame.time.get_ticks()
+        # Collision
+        self.collision = pygame.Rect(self.x, self.y, self.width, self.height)
 
     def draw(self):
         # Draw sprite current frame
         self.win.blit(self.sprite[self.sprite_current_frame_index], (self.x, self.y))
         # Go down
         self.y += self.velocity
+        # Update collision
+        self.collision.topleft = (self.x, self.y)
 
         # Animation
         if (
