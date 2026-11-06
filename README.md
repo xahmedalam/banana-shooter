@@ -6,5 +6,5 @@
 - [x] Add enemies
 - [x] Kill enemy on shoot
 - [x] Add game over
-- [ ] Add sound
+- [x] Add sound
 - [ ] Ship project

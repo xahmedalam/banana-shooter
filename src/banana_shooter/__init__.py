@@ -22,10 +22,10 @@ class Game:
 
         # Settings
         self.player_velocity = 15
-        self.bullet_velocity = 10
-        self.enemy_velocity = 3
+        self.bullet_velocity = 20
+        self.enemy_velocity = 10
         self.rate_of_fire = 2  # Fires per second
-        self.rate_of_enemies = 0.6  # Enemies per second
+        self.rate_of_enemies = 1  # Enemies per second
 
         # Player init
         self.player = Player(self.win, 220, 398, 64, 64, self.player_velocity)
@@ -38,7 +38,13 @@ class Game:
         self.enemies: list[Enemy] = []
         self.enemy_last_change = pygame.time.get_ticks()
 
+        # Game over
         self.is_gameover = False
+
+        # Sound bg
+        pygame.mixer_music.load("src/assets/EternityLivesLoop.wav")
+        pygame.mixer_music.set_volume(0.5)
+        pygame.mixer_music.play(-1)
 
     def run(self):
         self.running = True
