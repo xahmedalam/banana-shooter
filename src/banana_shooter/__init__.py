@@ -28,7 +28,7 @@ class Game:
         self.rate_of_enemies = 0.6  # Enemies per second
 
         # Player init
-        self.player = Player(self.win, 100, 398, 64, 64, self.player_velocity)
+        self.player = Player(self.win, 220, 398, 64, 64, self.player_velocity)
 
         # Bullets
         self.bullets: list[Bullet] = []
@@ -37,6 +37,8 @@ class Game:
         # Enemies
         self.enemies: list[Enemy] = []
         self.enemy_last_change = pygame.time.get_ticks()
+
+        self.is_gameover = False
 
     def run(self):
         self.running = True
@@ -50,17 +52,26 @@ class Game:
 
             keys = pygame.key.get_pressed()
 
-            # Player
-            if keys[pygame.K_LEFT]:
+            # Continue: reset the game
+            if keys[pygame.K_RETURN] and self.is_gameover:
+                self.player.x = 220
+                self.player.is_flip = False
+                self.bullets = []
+                self.enemies = []
+                self.is_gameover = False
+
+            # Player moves if not game over
+            if keys[pygame.K_LEFT] and not self.is_gameover:
                 self.player.go_left()
-            elif keys[pygame.K_RIGHT]:
+            elif keys[pygame.K_RIGHT] and not self.is_gameover:
                 self.player.go_right()
 
             self.player.is_walking = keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]
 
             # Fire Bullet
             if (
-                keys[pygame.K_SPACE]
+                not self.is_gameover  # No fire if game over
+                and keys[pygame.K_SPACE]
                 and pygame.time.get_ticks() - self.bullet_last_change
                 >= 1000 / self.rate_of_fire
             ):
@@ -106,6 +117,11 @@ class Game:
                         # Skip left enemies check for this bullet
                         break
 
+            # Game over if enemy touches the player
+            for enemy in self.enemies:
+                if self.player.collision.colliderect(enemy.collision):
+                    self.is_gameover = True
+
             self.paint()
 
         pygame.quit()
@@ -117,8 +133,9 @@ class Game:
         self.win.blit(
             load_image("src/assets/bg.png", (self.width, self.height)), (0, 0)
         )
-        # Player
-        self.player.draw()
+        # Player: draw player if not game over
+        if not self.is_gameover:
+            self.player.draw()
 
         # Enemy
         for enemy in self.enemies:
@@ -127,6 +144,25 @@ class Game:
         # Bullet
         for bullet in self.bullets:
             bullet.draw()
+
+        # Game over? then draw game over image
+        if self.is_gameover:
+            gameover_img_scale = 10
+            gameover_img_width = 32 * gameover_img_scale
+            gameover_img_height = 17 * gameover_img_scale
+            self.win.blit(
+                load_image(
+                    "src/assets/game-over.png",
+                    (
+                        gameover_img_width,
+                        gameover_img_height,
+                    ),
+                ),
+                (
+                    (self.width / 2) - (gameover_img_width / 2),
+                    (self.height / 2) - (gameover_img_height / 2),
+                ),
+            )
 
         # Update display
         pygame.display.update()

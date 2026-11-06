@@ -43,8 +43,13 @@ class Player:
         self.sprite_walk_last_change = pygame.time.get_ticks()
         self.is_flip = False
         self.is_walking = False
+        # Collision
+        self.collision = pygame.Rect((self.x, self.y, self.width, self.height))
 
     def draw(self):
+        # Update collision
+        self.collision.topleft = (self.x, self.y)
+
         # Idle
         if not self.is_walking:
             sprite = pygame.transform.flip(
