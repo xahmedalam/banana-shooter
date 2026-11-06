@@ -67,12 +67,17 @@ class Game:
                 self.is_gameover = False
 
             # Player moves if not game over
-            if keys[pygame.K_LEFT] and not self.is_gameover:
+            if keys[pygame.K_LEFT] or keys[pygame.K_a] and not self.is_gameover:
                 self.player.go_left()
-            elif keys[pygame.K_RIGHT] and not self.is_gameover:
+            elif keys[pygame.K_RIGHT] or keys[pygame.K_d] and not self.is_gameover:
                 self.player.go_right()
 
-            self.player.is_walking = keys[pygame.K_LEFT] or keys[pygame.K_RIGHT]
+            self.player.is_walking = (
+                keys[pygame.K_LEFT]
+                or keys[pygame.K_RIGHT]
+                or keys[pygame.K_a]
+                or keys[pygame.K_d]
+            )
 
             # Fire Bullet
             if (
