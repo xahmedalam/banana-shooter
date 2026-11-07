@@ -2,6 +2,8 @@
 
 It's a 2d game where you are a monkey and your target is to kill the bats and doge.
 
+<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/3af44a8e-dd1c-4612-9cf3-e769ce31b4cc" />
+
 ## Installation
 
 1. Download and install python from [python.org](https://python.org) if haven't already.
