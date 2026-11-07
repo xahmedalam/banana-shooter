@@ -1,7 +1,7 @@
 [project]
 name = "banana-shooter"
 version = "0.1.0"
-description = "Add your description here"
+description = "It's a 2d game where you are a monkey and your target is to kill the bats and doge."
 readme = "README.md"
 authors = [
     { name = "Ahmed Alam", email = "ahmed@conutil.com" }
