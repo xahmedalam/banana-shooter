@@ -7,13 +7,15 @@ class Bullet:
     def __init__(
         self,
         win: pygame.Surface,
-        x: int,
-        y: int,
+        delta: float,
+        x: float,
+        y: float,
         width: int,
         height: int,
         velocity: int,
     ) -> None:
         self.win = win
+        self.delta = delta
         self.x = x
         self.y = y
         self.width = width
@@ -35,7 +37,7 @@ class Bullet:
         # Draw sprite current frame
         self.win.blit(self.sprite[self.sprite_current_frame_index], (self.x, self.y))
         # Fire up
-        self.y -= self.velocity
+        self.y -= self.velocity * self.delta
         # Update collision
         self.collision.topleft = (self.x, self.y)
 

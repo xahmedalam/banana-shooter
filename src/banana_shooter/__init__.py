@@ -12,7 +12,7 @@ class Game:
     def __init__(self) -> None:
         self.width = 512
         self.height = 512
-        self.fps = 30
+        self.fps = 60
         self.running = False
 
         # Fix sound lag
@@ -24,14 +24,14 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Settings
-        self.player_velocity = 15
-        self.bullet_velocity = 20
-        self.enemy_velocity = 10
+        self.player_velocity = 600
+        self.bullet_velocity = 400
+        self.enemy_velocity = 250
         self.rate_of_fire = 2  # Fires per second
-        self.rate_of_enemies = 1  # Enemies per second
+        self.rate_of_enemies = 1.5  # Enemies per second
 
         # Player init
-        self.player = Player(self.win, 220, 398, 64, 64, self.player_velocity)
+        self.player = Player(self.win, 0.0, 220.0, 398.0, 64, 64, self.player_velocity)
 
         # Bullets
         self.bullets: list[Bullet] = []
@@ -53,7 +53,9 @@ class Game:
         self.running = True
 
         while self.running:
-            self.clock.tick(self.fps)
+            # FPS and Delta
+            self.delta = self.clock.tick(self.fps) / 1000
+            self.player.delta = self.delta
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -63,7 +65,7 @@ class Game:
 
             # Continue: reset the game
             if keys[pygame.K_RETURN] and self.is_gameover:
-                self.player.x = 220
+                self.player.x = 220.0
                 self.player.is_flip = False
                 self.bullets = []
                 self.enemies = []
@@ -91,6 +93,7 @@ class Game:
             ):
                 bullet = Bullet(
                     self.win,
+                    self.delta,
                     self.player.x + 32,
                     self.player.y,
                     24,
@@ -111,7 +114,9 @@ class Game:
                 >= 1000 / self.rate_of_enemies
             ):
                 random_x = random.randint(32, self.width - 32)
-                enemy = Enemy(self.win, random_x, -32, 32, 32, self.enemy_velocity)
+                enemy = Enemy(
+                    self.win, self.delta, random_x, -32.0, 32, 32, self.enemy_velocity
+                )
                 self.enemies.append(enemy)
                 self.enemy_last_change = pygame.time.get_ticks()
 
