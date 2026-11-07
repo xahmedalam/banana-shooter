@@ -15,6 +15,9 @@ class Game:
         self.fps = 30
         self.running = False
 
+        # Fix sound lag
+        pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
+
         pygame.init()
         pygame.display.set_caption("Banana Shooter")
         self.win = pygame.display.set_mode((self.width, self.height))
@@ -42,9 +45,9 @@ class Game:
         self.is_gameover = False
 
         # Sound bg
-        pygame.mixer_music.load("src/assets/EternityLivesLoop.wav")
-        pygame.mixer_music.set_volume(0.5)
-        pygame.mixer_music.play(-1)
+        pygame.mixer.music.load("src/assets/EternityLivesLoop.wav")
+        pygame.mixer.music.set_volume(1)
+        pygame.mixer.music.play(-1)
 
     def run(self):
         self.running = True
