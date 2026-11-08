@@ -4,6 +4,7 @@ import pygame
 
 from .bullet import Bullet
 from .enemy import Enemy
+from .level import Level
 from .player import Player
 from .utils import load_image
 
@@ -19,6 +20,7 @@ class Game:
         pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
 
         pygame.init()
+        pygame.font.init()
         pygame.display.set_caption("Banana Shooter")
         self.win = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
@@ -29,6 +31,9 @@ class Game:
         self.enemy_velocity = 250
         self.rate_of_fire = 2  # Fires per second
         self.rate_of_enemies = 1.5  # Enemies per second
+
+        # Level init
+        self.level = Level(self.win)
 
         # Player init
         self.player = Player(self.win, 0.0, 220.0, 398.0, 64, 64, self.player_velocity)
@@ -133,6 +138,8 @@ class Game:
                     if bullet.collision.colliderect(enemy.collision):
                         self.bullets.pop(bullet_index)
                         self.enemies.pop(enemy_index)
+                        # Score up
+                        self.level.score_up()
                         # Skip left enemies check for this bullet
                         break
 
@@ -140,6 +147,10 @@ class Game:
             for enemy in self.enemies:
                 if self.player.collision.colliderect(enemy.collision):
                     self.is_gameover = True
+
+            # Score reset if gameover
+            if self.is_gameover:
+                self.level.score_reset()
 
             self.paint()
 
@@ -152,6 +163,8 @@ class Game:
         self.win.blit(
             load_image("src/assets/bg.png", (self.width, self.height)), (0, 0)
         )
+        # Level
+        self.level.draw()
         # Player: draw player if not game over
         if not self.is_gameover:
             self.player.draw()
