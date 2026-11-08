@@ -26,7 +26,7 @@ class Game:
         self.clock = pygame.time.Clock()
 
         # Settings
-        self.player_velocity = 600
+        self.player_velocity = 400
         self.bullet_velocity = 400
         self.enemy_velocity = 250
         self.rate_of_fire = 2  # Fires per second
@@ -99,7 +99,7 @@ class Game:
                 bullet = Bullet(
                     self.win,
                     self.delta,
-                    self.player.x + 32,
+                    self.player.x + 20,
                     self.player.y,
                     24,
                     24,
