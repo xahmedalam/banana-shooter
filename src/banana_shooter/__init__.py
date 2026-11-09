@@ -2,6 +2,7 @@ import random
 
 import pygame
 
+from .audio_manager import AudioManager
 from .bullet import Bullet
 from .enemy import Enemy
 from .level import Level
@@ -16,14 +17,16 @@ class Game:
         self.fps = 60
         self.running = False
 
-        # Fix sound lag
-        pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=4096)
-
+        AudioManager.pre_init()
         pygame.init()
         pygame.font.init()
         pygame.display.set_caption("Banana Shooter")
         self.win = pygame.display.set_mode((self.width, self.height))
         self.clock = pygame.time.Clock()
+
+        # Audio
+        self.audio = AudioManager()
+        self.audio.bg_play()
 
         # Settings
         self.player_velocity = 400
@@ -48,11 +51,6 @@ class Game:
 
         # Game over
         self.is_gameover = False
-
-        # Sound bg
-        pygame.mixer.music.load("src/assets/EternityLivesLoop.wav")
-        pygame.mixer.music.set_volume(1)
-        pygame.mixer.music.play(-1)
 
     def run(self):
         self.running = True
