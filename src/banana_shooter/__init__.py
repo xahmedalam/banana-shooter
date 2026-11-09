@@ -151,6 +151,7 @@ class Game:
                     and not self.is_gameover
                 ):
                     self.level.health_down()
+                    self.player.effect_blink()
 
             # Game over if health is less than 0
             if self.level.health < 0:

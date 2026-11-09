@@ -47,6 +47,11 @@ class Player:
         self.is_walking = False
         # Collision
         self.collision = pygame.Rect((self.x, self.y, self.width, self.height))
+        # Effect vars
+        self.effect_blink_count = 0
+        self.effect_blink_on = False
+        self.effect_blink_last_change = pygame.time.get_ticks()
+        self.is_blinking = False
 
     def draw(self):
         # Update collision
@@ -66,6 +71,26 @@ class Player:
                 self.is_flip,
                 False,
             )
+
+        # Effect blink: if effect_blink_on is true then increase sprite light
+        if self.effect_blink_on:
+            sprite = pygame.transform.hsl(sprite, 0, 0, 0.6)
+
+        # Effect blink: if blinking is true then on every 30ms turn on and off effect_blink_on
+        if (
+            self.is_blinking
+            and (pygame.time.get_ticks() - self.effect_blink_last_change) >= 30
+        ):
+            # If true then false, If false then true
+            self.effect_blink_on = not self.effect_blink_on
+            # Count + 1
+            self.effect_blink_count += 1
+            # After 6 counts stop blinking, it actually blinks half of the count
+            if self.effect_blink_count == 6:
+                self.effect_blink_count = 0
+                self.is_blinking = False
+            # Finally update last change time
+            self.effect_blink_last_change = pygame.time.get_ticks()
 
         # Draw sprite
         self.win.blit(sprite, (self.x, self.y))
@@ -107,3 +132,6 @@ class Player:
     def clamping(self):
         self.x = min(self.x, self.win.width - self.width)
         self.x = max(self.x, 0)
+
+    def effect_blink(self):
+        self.is_blinking = True
