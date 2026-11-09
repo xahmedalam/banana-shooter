@@ -74,6 +74,7 @@ class Game:
                 self.player.is_flip = False
                 self.bullets = []
                 self.enemies = []
+                self.level.reset()
                 self.is_gameover = False
 
             # Player moves if not game over
@@ -143,14 +144,17 @@ class Game:
                         # Skip left enemies check for this bullet
                         break
 
-            # Game over if enemy touches the player
+            # Health minus if enemy touches the player
             for enemy in self.enemies:
-                if self.player.collision.colliderect(enemy.collision):
-                    self.is_gameover = True
+                if (
+                    self.player.collision.colliderect(enemy.collision)
+                    and not self.is_gameover
+                ):
+                    self.level.health_down()
 
-            # Score reset if gameover
-            if self.is_gameover:
-                self.level.score_reset()
+            # Game over if health is less than 0
+            if self.level.health < 0:
+                self.is_gameover = True
 
             self.paint()
 
@@ -163,8 +167,6 @@ class Game:
         self.win.blit(
             load_image("src/assets/bg.png", (self.width, self.height)), (0, 0)
         )
-        # Level
-        self.level.draw()
         # Player: draw player if not game over
         if not self.is_gameover:
             self.player.draw()
@@ -176,6 +178,9 @@ class Game:
         # Bullet
         for bullet in self.bullets:
             bullet.draw()
+
+        # Level
+        self.level.draw()
 
         # Game over? then draw game over image
         if self.is_gameover:
