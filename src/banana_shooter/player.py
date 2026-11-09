@@ -7,7 +7,6 @@ class Player:
     def __init__(
         self,
         win: pygame.Surface,
-        delta: float,
         x: float,
         y: float,
         width: int,
@@ -15,7 +14,6 @@ class Player:
         velocity: int,
     ) -> None:
         self.win = win
-        self.delta = delta
         self.x = x
         self.y = y
         self.width = width
@@ -119,13 +117,13 @@ class Player:
                 self.sprite_walk_current_frame_index = 0
             self.sprite_walk_last_change = pygame.time.get_ticks()
 
-    def go_left(self):
-        self.x -= self.velocity * self.delta
+    def go_left(self, delta: float):
+        self.x -= self.velocity * delta
         self.clamping()
         self.is_flip = True
 
-    def go_right(self):
-        self.x += self.velocity * self.delta
+    def go_right(self, delta: float):
+        self.x += self.velocity * delta
         self.clamping()
         self.is_flip = False
 

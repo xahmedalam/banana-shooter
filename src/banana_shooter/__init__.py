@@ -36,7 +36,7 @@ class Game:
         self.level = Level(self.win)
 
         # Player init
-        self.player = Player(self.win, 0.0, 220.0, 398.0, 64, 64, self.player_velocity)
+        self.player = Player(self.win, 220.0, 398.0, 64, 64, self.player_velocity)
 
         # Bullets
         self.bullets: list[Bullet] = []
@@ -60,7 +60,6 @@ class Game:
         while self.running:
             # FPS and Delta
             self.delta = self.clock.tick(self.fps) / 1000
-            self.player.delta = self.delta
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -79,9 +78,9 @@ class Game:
 
             # Player moves if not game over
             if keys[pygame.K_LEFT] or keys[pygame.K_a] and not self.is_gameover:
-                self.player.go_left()
+                self.player.go_left(self.delta)
             elif keys[pygame.K_RIGHT] or keys[pygame.K_d] and not self.is_gameover:
-                self.player.go_right()
+                self.player.go_right(self.delta)
 
             self.player.is_walking = (
                 keys[pygame.K_LEFT]
@@ -99,7 +98,6 @@ class Game:
             ):
                 bullet = Bullet(
                     self.win,
-                    self.delta,
                     self.player.x + 20,
                     self.player.y,
                     24,
@@ -120,9 +118,7 @@ class Game:
                 >= 1000 / self.rate_of_enemies
             ):
                 random_x = random.randint(32, self.width - 32)
-                enemy = Enemy(
-                    self.win, self.delta, random_x, -32.0, 32, 32, self.enemy_velocity
-                )
+                enemy = Enemy(self.win, random_x, -32.0, 32, 32, self.enemy_velocity)
                 self.enemies.append(enemy)
                 self.enemy_last_change = pygame.time.get_ticks()
 
@@ -174,11 +170,11 @@ class Game:
 
         # Enemy
         for enemy in self.enemies:
-            enemy.draw()
+            enemy.draw(self.delta)
 
         # Bullet
         for bullet in self.bullets:
-            bullet.draw()
+            bullet.draw(self.delta)
 
         # Level
         self.level.draw()

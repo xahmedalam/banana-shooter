@@ -7,7 +7,6 @@ class Enemy:
     def __init__(
         self,
         win: pygame.Surface,
-        delta: float,
         x: float,
         y: float,
         width: int,
@@ -15,7 +14,6 @@ class Enemy:
         velocity: int,
     ) -> None:
         self.win = win
-        self.delta = delta
         self.x = x
         self.y = y
         self.width = width
@@ -36,11 +34,11 @@ class Enemy:
         # Collision
         self.collision = pygame.Rect(self.x, self.y, self.width, self.height)
 
-    def draw(self):
+    def draw(self, delta: float):
         # Draw sprite current frame
         self.win.blit(self.sprite[self.sprite_current_frame_index], (self.x, self.y))
         # Go down
-        self.y += self.velocity * self.delta
+        self.y += self.velocity * delta
         # Update collision
         self.collision.topleft = (self.x, self.y)
 
