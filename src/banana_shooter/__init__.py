@@ -163,7 +163,7 @@ class Game:
         self.win.fill((0, 0, 0))
         # Background
         self.win.blit(
-            load_image("src/assets/bg.png", (self.width, self.height)), (0, 0)
+            load_image("src/assets/img/bg.png", (self.width, self.height)), (0, 0)
         )
         # Player: draw player if not game over
         if not self.is_gameover:
@@ -187,7 +187,7 @@ class Game:
             gameover_img_height = 17 * gameover_img_scale
             self.win.blit(
                 load_image(
-                    "src/assets/game-over.png",
+                    "src/assets/img/game-over.png",
                     (
                         gameover_img_width,
                         gameover_img_height,

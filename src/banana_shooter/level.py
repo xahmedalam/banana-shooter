@@ -12,13 +12,13 @@ class Level:
 
         # Load font
         try:
-            self.font = pygame.font.Font("src/assets/PixelifySans-Medium.ttf", 20)
+            self.font = pygame.font.Font("src/assets/font/PixelifySans-Medium.ttf", 20)
         except FileNotFoundError:
             self.font = pygame.font.Font(None, 24)
 
         # Heart
         self.heart_sprite = create_sprite_sheet(
-            "src/assets/heart-strip3.png", 3, (18, 18), (24, 24)
+            "src/assets/img/heart-strip3.png", 3, (18, 18), (24, 24)
         )
         self.health_last_change = pygame.time.get_ticks()
 

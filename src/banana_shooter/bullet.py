@@ -22,7 +22,7 @@ class Bullet:
         # Sprite
         self.strip_count = 17
         self.sprite = create_sprite_sheet(
-            "src/assets/banana-idle-strip17.png", self.strip_count, (32, 32), None
+            "src/assets/img/banana-idle-strip17.png", self.strip_count, (32, 32), None
         )
         # Animation vars
         self.sprite_animation_speed = 17

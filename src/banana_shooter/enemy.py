@@ -22,7 +22,7 @@ class Enemy:
         # Sprite
         self.strip_count = 3
         self.sprite = create_sprite_sheet(
-            "src/assets/bat-idle-strip3.png",
+            "src/assets/img/bat-idle-strip3.png",
             self.strip_count,
             (24, 24),
             (self.width, self.height),

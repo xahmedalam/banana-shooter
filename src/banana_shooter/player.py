@@ -22,14 +22,14 @@ class Player:
         # Sprites
         self.sprite_idle_strip_count = 5
         self.sprite_idle = create_sprite_sheet(
-            "src/assets/monkey-idle-strip5.png",
+            "src/assets/img/monkey-idle-strip5.png",
             self.sprite_idle_strip_count,
             (32, 32),
             (64, 64),
         )
         self.sprite_walk_strip_count = 6
         self.sprite_walk = create_sprite_sheet(
-            "src/assets/monkey-walk-strip6.png",
+            "src/assets/img/monkey-walk-strip6.png",
             self.sprite_walk_strip_count,
             (32, 32),
             (64, 64),
