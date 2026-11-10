@@ -17,7 +17,9 @@ class AudioManager:
         self.bullet_sound.set_volume(1)
 
         # Enemy damage
-        self.enemy_damage_sound = pygame.mixer.Sound("src/assets/audio/enemy-damage.ogg")
+        self.enemy_damage_sound = pygame.mixer.Sound(
+            "src/assets/audio/enemy-damage.ogg"
+        )
         self.enemy_damage_sound.set_volume(1)
 
         # Player damage
@@ -25,6 +27,7 @@ class AudioManager:
             "src/assets/audio/player-damage.ogg"
         )
         self.player_damage_sound.set_volume(1)
+        self.player_damage_last_change = pygame.time.get_ticks()
 
     def bg_play(self):
         pygame.mixer.music.play(-1)
@@ -39,4 +42,7 @@ class AudioManager:
         self.enemy_damage_sound.play()
 
     def play_player_damage(self):
-        self.player_damage_sound.play()
+        # Play with 500ms cool down
+        if pygame.time.get_ticks() - self.player_damage_last_change >= 500:
+            self.player_damage_sound.play()
+            self.player_damage_last_change = pygame.time.get_ticks()
