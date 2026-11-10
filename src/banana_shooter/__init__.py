@@ -103,6 +103,7 @@ class Game:
                     self.bullet_velocity,
                 )
                 self.bullets.append(bullet)
+                self.audio.play_bullet()
                 self.bullet_last_change = pygame.time.get_ticks()
 
             # Cleanup: destroy bullet if out off window
@@ -135,6 +136,7 @@ class Game:
                         self.enemies.pop(enemy_index)
                         # Score up
                         self.level.score_up()
+                        self.audio.play_enemy_damage()
                         # Skip left enemies check for this bullet
                         break
 
@@ -146,6 +148,7 @@ class Game:
                 ):
                     self.level.health_down()
                     self.player.effect_blink()
+                    self.audio.play_player_damage()
 
             # Game over if health is less than 0
             if self.level.health < 0:
