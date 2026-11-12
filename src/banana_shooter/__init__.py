@@ -71,6 +71,11 @@ class Game:
 
             keys = pygame.key.get_pressed()
 
+            # Audio: toggle mute
+            if pygame.key.get_just_pressed()[pygame.K_m]:
+                self.audio.toggle_mute()
+            self.audio.check_mute()
+
             # Continue: reset the game
             if keys[pygame.K_RETURN] and self.is_gameover:
                 self.player.x = 220.0
