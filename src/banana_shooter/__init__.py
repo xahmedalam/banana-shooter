@@ -3,6 +3,7 @@ import random
 import pygame
 
 from .audio_manager import AudioManager
+from .banana_shake import BananaShake
 from .bullet import Bullet
 from .enemy import Enemy
 from .level import Level
@@ -34,6 +35,7 @@ class Game:
         self.enemy_velocity = 250
         self.rate_of_fire = 2  # Fires per second
         self.rate_of_enemies = 1.5  # Enemies per second
+        self.bonus_velocity = 150
 
         # Level init
         self.level = Level(self.win)
@@ -48,6 +50,10 @@ class Game:
         # Enemies
         self.enemies: list[Enemy] = []
         self.enemy_last_change = pygame.time.get_ticks()
+
+        # Bonuses
+        self.bonuses: list[BananaShake] = []
+        self.bonuses_last_change = pygame.time.get_ticks()
 
         # Game over
         self.is_gameover = False
@@ -116,8 +122,9 @@ class Game:
                 pygame.time.get_ticks() - self.enemy_last_change
                 >= 1000 / self.rate_of_enemies
             ):
-                random_x = random.randint(32, self.width - 32)
-                enemy = Enemy(self.win, random_x, -32.0, 32, 32, self.enemy_velocity)
+                enemy = Enemy(
+                    self.win, self.random_x(), -32.0, 32, 32, self.enemy_velocity
+                )
                 self.enemies.append(enemy)
                 self.enemy_last_change = pygame.time.get_ticks()
 
@@ -150,6 +157,27 @@ class Game:
                     self.player.effect_blink()
                     self.audio.play_player_damage()
 
+            # Bonus: add 1 bonus on between 15s to 30s
+            if (
+                pygame.time.get_ticks() - self.bonuses_last_change
+            ) >= self.random_time_ms(15, 30):
+                bonus = BananaShake(
+                    self.win, self.random_x(), -32.0, 32, 32, self.bonus_velocity
+                )
+                self.bonuses.append(bonus)
+                self.bonuses_last_change = pygame.time.get_ticks()
+
+            # Bonus: health up if player touches the bonus
+            for index, bonus in enumerate(self.bonuses):
+                if (
+                    self.player.collision.colliderect(bonus.collision)
+                    and not self.is_gameover
+                ):
+                    # Health up
+                    self.level.health_up(bonus.bonus)
+                    # Remove bonus
+                    self.bonuses.pop(index)
+
             # Game over if health is less than 0
             if self.level.health < 0:
                 self.is_gameover = True
@@ -177,6 +205,10 @@ class Game:
         for bullet in self.bullets:
             bullet.draw(self.delta)
 
+        # Bonus
+        for bonus in self.bonuses:
+            bonus.draw(self.delta)
+
         # Level
         self.level.draw()
 
@@ -201,6 +233,13 @@ class Game:
 
         # Update display
         pygame.display.update()
+
+    def random_x(self):
+        return random.randint(32, self.width - 32)
+
+    def random_time_ms(self, start_seconds: int, end_seconds: int):
+        seconds = random.randint(start_seconds, end_seconds)
+        return 1000 * seconds
 
 
 def main() -> None:

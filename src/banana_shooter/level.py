@@ -57,6 +57,15 @@ class Level:
     def score_up(self):
         self.score += 1
 
+    def health_up(self, value: int):
+        if self.health == 100:
+            return
+        # Health is between 0 to 50 here
+        elif value == 100:
+            self.health = 100
+        elif value == 50:
+            self.health += 50
+
     def health_down(self):
         # Health minus with 1s cool down
         if (pygame.time.get_ticks() - self.health_last_change) >= 1000:
