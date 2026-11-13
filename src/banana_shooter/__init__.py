@@ -8,6 +8,7 @@ from .bullet import Bullet
 from .enemy import Enemy
 from .level import Level
 from .player import Player
+from .skull_boss import SkullBoss
 from .utils import load_image
 
 
@@ -54,6 +55,12 @@ class Game:
         # Bonuses
         self.bonuses: list[BananaShake] = []
         self.bonuses_last_change = pygame.time.get_ticks()
+
+        # Bosses
+        self.bosses = [
+            SkullBoss(self.win, self.player, (self.width / 2) - 32, -64, 64, 64, 100)
+        ]
+        # self.bosses_last_change = pygame.time.get_ticks()
 
         # Game over
         self.is_gameover = False
@@ -213,6 +220,10 @@ class Game:
         # Bonus
         for bonus in self.bonuses:
             bonus.draw(self.delta)
+
+        # Bosses
+        for boss in self.bosses:
+            boss.draw(self.delta)
 
         # Level
         self.level.draw()
