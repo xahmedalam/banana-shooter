@@ -190,6 +190,15 @@ class Game:
                     # Remove bonus
                     self.bonuses.pop(index)
 
+            # Boss: boss health down if bullet touches the boss
+            for boss in self.bosses:
+                for bullet_index, bullet in enumerate(self.bullets):
+                    if boss.collision.colliderect(bullet.collision):
+                        # Remove bullet
+                        self.bullets.pop(bullet_index)
+                        # Health down
+                        boss.health_down()
+
             # Game over if health is less than 0
             if self.level.health < 0:
                 self.is_gameover = True

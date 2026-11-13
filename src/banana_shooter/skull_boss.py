@@ -29,6 +29,7 @@ class SkullBoss:
         self.height = height
         self.velocity = velocity
         self.damage = damage
+        self.health = 100
 
         # Sprite
         self.sprite = load_image(
@@ -41,11 +42,33 @@ class SkullBoss:
         self.count = 0
         self.animation_last_change = pygame.time.get_ticks()
 
+        # HP
+        self.hp_sprite = pygame.transform.scale(self.sprite, (24, 24))
+        self.hp_count = 5
+
     def draw(self, delta: float):
         # Draw sprite
         self.win.blit(self.sprite, (self.x, self.y))
         # Update collision
         self.collision.topleft = (self.x, self.y)
+
+        # HP
+        if self.health > 80:
+            self.hp_count = 5
+        elif self.health > 60:
+            self.hp_count = 4
+        elif self.health > 40:
+            self.hp_count = 3
+        elif self.health > 20:
+            self.hp_count = 2
+        elif self.health > 0:
+            self.hp_count = 1
+        else:
+            self.hp_count = 0
+        # HP Bar
+        for i in range(self.hp_count):
+            i += 1
+            self.win.blit(self.hp_sprite, ((self.win.width - (24 * i)) - 6, 6))
 
         # Animation BEGIN
         # 1. Show by moving Y30
@@ -121,3 +144,6 @@ class SkullBoss:
     def clamp(self):
         self.x = min(self.x, self.win.width - self.width)
         self.x = max(self.x, 0)
+
+    def health_down(self):
+        self.health -= 2
