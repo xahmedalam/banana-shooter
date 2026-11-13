@@ -5,7 +5,7 @@ from .utils import create_sprite_sheet, load_image
 
 class Level:
     def __init__(
-        self, win: pygame.Surface, health: int = 100, level: int = 4, score: int = 0
+        self, win: pygame.Surface, health: int = 100, level: int = 0, score: int = 0
     ):
         self.win = win
         self.health = health
@@ -53,6 +53,16 @@ class Level:
         # Star for levels
         for i in range(self.level):
             self.win.blit(self.star_sprite, (6 + (26 * i), 6 + 24))
+
+        # Level up
+        if self.score == 5:
+            self.level = 1
+        elif self.score == 10:
+            self.level = 2
+        elif self.score == 25:
+            self.level = 3
+        elif self.score == 50:
+            self.level = 4
 
     def score_up(self):
         self.score += 1
