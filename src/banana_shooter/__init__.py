@@ -57,10 +57,7 @@ class Game:
         self.bonuses_last_change = pygame.time.get_ticks()
 
         # Bosses
-        self.bosses = [
-            SkullBoss(self.win, self.player, (self.width / 2) - 32, -64, 64, 64, 100)
-        ]
-        # self.bosses_last_change = pygame.time.get_ticks()
+        self.bosses: list[SkullBoss] = []
 
         # Game over
         self.is_gameover = False
@@ -190,6 +187,14 @@ class Game:
                     # Remove bonus
                     self.bonuses.pop(index)
 
+            # Boss: if bosses list is empty and level 2 then add SkullBoss
+            if not self.bosses and self.level.level == 2:
+                self.bosses.append(
+                    SkullBoss(
+                        self.win, self.player, (self.width / 2) - 32, -64, 64, 64, 100
+                    )
+                )
+                
             # Boss: boss health down if bullet touches the boss
             for boss in self.bosses:
                 for bullet_index, bullet in enumerate(self.bullets):
