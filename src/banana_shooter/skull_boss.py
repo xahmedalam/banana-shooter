@@ -37,18 +37,40 @@ class SkullBoss:
         )
         # Collision
         self.collision = pygame.Rect(self.x, self.y, self.width, self.height)
-        # Animation vars
-        self.stage = 1
-        self.count = 0
-        self.animation_last_change = pygame.time.get_ticks()
-
         # HP
         self.hp_sprite = pygame.transform.scale(self.sprite, (24, 24))
         self.hp_count = 5
 
+        # Animation vars
+        self.stage = 1
+        self.count = 0
+        self.animation_last_change = pygame.time.get_ticks()
+        # Effect vars
+        self.effect_blink_count = 0
+        self.effect_blink_last_change = pygame.time.get_ticks()
+        self.is_blinking = False
+
     def draw(self, delta: float):
+        # Effect blink: if effect_blink_count is odd then increase sprite light
+        if self.effect_blink_count % 2 == 1:
+            sprite = pygame.transform.hsl(self.sprite, 0, 0, 0.6)
+        else:
+            sprite = self.sprite
+
+        # Effect blink: if is_blinking then on every 30ms effect_blink_count + 1
+        if (
+            self.is_blinking
+            and (pygame.time.get_ticks() - self.effect_blink_last_change) >= 30
+        ):
+            self.effect_blink_count += 1
+            # After 6 counts stop blinking
+            if self.effect_blink_count == 6:
+                self.effect_blink_count = 0
+                self.is_blinking = False
+            self.effect_blink_last_change = pygame.time.get_ticks()
+
         # Draw sprite
-        self.win.blit(self.sprite, (self.x, self.y))
+        self.win.blit(sprite, (self.x, self.y))
         # Update collision
         self.collision.topleft = (self.x, self.y)
 
@@ -129,6 +151,7 @@ class SkullBoss:
             if self.count % 2 == 1 and self.y <= 56:
                 self.count = 0
                 self.stage = 2
+        # Animation END
 
     def is_player_in_range(self):
         """
@@ -146,4 +169,7 @@ class SkullBoss:
         self.x = max(self.x, 0)
 
     def health_down(self):
+        # Health down
         self.health -= 2
+        # Blink
+        self.is_blinking = True
