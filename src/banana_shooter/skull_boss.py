@@ -19,7 +19,6 @@ class SkullBoss:
         width: int,
         height: int,
         velocity: int,
-        damage: int = 100,
     ) -> None:
         self.win = win
         self.player = player
@@ -28,7 +27,6 @@ class SkullBoss:
         self.width = width
         self.height = height
         self.velocity = velocity
-        self.damage = damage
         self.health = 100
 
         # Sprite

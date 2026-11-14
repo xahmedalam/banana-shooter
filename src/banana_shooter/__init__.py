@@ -199,6 +199,11 @@ class Game:
                         # Health down
                         boss.health_down()
 
+            # Boss: player health down if boss touches the player
+            for boss in self.bosses:
+                if self.player.collision.colliderect(boss.collision):
+                    self.level.health_down()
+
             # Game over if health is less than 0
             if self.level.health < 0:
                 self.is_gameover = True
