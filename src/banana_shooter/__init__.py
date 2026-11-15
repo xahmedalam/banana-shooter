@@ -277,6 +277,13 @@ class Game:
                     (self.height / 2) - (gameover_img_height / 2),
                 ),
             )
+            # Continue game text
+            text_surface = self.level.font.render(
+                "press enter to continue", True, (0, 0, 0)
+            )
+            self.win.blit(
+                text_surface, ((self.width - text_surface.get_width()) / 2, 355)
+            )
 
         # Update display
         pygame.display.update()
