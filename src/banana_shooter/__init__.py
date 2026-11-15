@@ -261,6 +261,12 @@ class Game:
         # Level
         self.level.draw()
 
+        # Overlay: red overlay if bosses
+        if self.bosses:
+            s = pygame.Surface((512, 512), pygame.SRCALPHA)
+            pygame.draw.rect(s, (255, 0, 0, 20), (0, 0, 512, 512))
+            self.win.blit(s, (0, 0))
+
         # Game over? then draw game over image
         if self.is_gameover:
             gameover_img_scale = 10
