@@ -23,23 +23,30 @@ class AudioManager:
 
         # Fire
         self.bullet_sound = pygame.mixer.Sound("src/assets/audio/bullet.ogg")
-        self.bullet_sound.set_volume(self.sfx_volume)
         self.sfxs.append(self.bullet_sound)
 
         # Enemy damage
         self.enemy_damage_sound = pygame.mixer.Sound(
             "src/assets/audio/enemy-damage.ogg"
         )
-        self.enemy_damage_sound.set_volume(self.sfx_volume)
         self.sfxs.append(self.enemy_damage_sound)
 
         # Player damage
         self.player_damage_sound = pygame.mixer.Sound(
             "src/assets/audio/player-damage.ogg"
         )
-        self.player_damage_sound.set_volume(self.sfx_volume)
         self.player_damage_last_change = pygame.time.get_ticks()
         self.sfxs.append(self.player_damage_sound)
+
+        # Boss damage
+        self.boss_damage_sound = pygame.mixer.Sound("src/assets/audio/boss-damage.ogg")
+        self.sfxs.append(self.boss_damage_sound)
+
+        # Boss health bar skull destroy
+        self.boss_health_bar_skull_destroy_sound = pygame.mixer.Sound(
+            "src/assets/audio/bone-break.ogg"
+        )
+        self.sfxs.append(self.boss_health_bar_skull_destroy_sound)
 
     def toggle_mute(self):
         if self.mute:
@@ -57,10 +64,13 @@ class AudioManager:
             for sfx in self.sfxs:
                 sfx.set_volume(self.sfx_volume)
 
-    def bg_play(self):
+    def play_bg(self, boss_audio: bool = False):
+        if boss_audio:
+            pygame.mixer.music.load("src/assets/audio/bg-boss-fight.ogg")
+            pygame.mixer.music.set_volume(1.0)
         pygame.mixer.music.play(-1)
 
-    def bg_stop(self):
+    def stop_bg(self):
         pygame.mixer.music.stop()
 
     def play_bullet(self):
@@ -74,3 +84,9 @@ class AudioManager:
         if pygame.time.get_ticks() - self.player_damage_last_change >= 500:
             self.player_damage_sound.play()
             self.player_damage_last_change = pygame.time.get_ticks()
+
+    def play_boss_damage(self):
+        self.boss_damage_sound.play()
+
+    def play_boss_health_bar_skull_destroy(self):
+        self.boss_health_bar_skull_destroy_sound.play()

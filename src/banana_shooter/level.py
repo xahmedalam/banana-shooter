@@ -69,10 +69,10 @@ class Level:
         elif value == 50:
             self.health += 50
 
-    def health_down(self):
+    def health_down(self, damage: int = 50):
         # Health minus with 1s cool down
         if (pygame.time.get_ticks() - self.health_last_change) >= 1000:
-            self.health -= 50
+            self.health -= damage
             self.health_last_change = pygame.time.get_ticks()
 
     def reset(self):

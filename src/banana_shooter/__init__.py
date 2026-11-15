@@ -28,7 +28,7 @@ class Game:
 
         # Audio
         self.audio = AudioManager()
-        self.audio.bg_play()
+        self.audio.play_bg()
 
         # Settings
         self.player_velocity = 400
@@ -187,14 +187,22 @@ class Game:
                     # Remove bonus
                     self.bonuses.pop(index)
 
-            # Boss: if bosses list is empty and level 2 then add SkullBoss
+            # Boss add: if bosses list is empty and level 2 then add SkullBoss
             if not self.bosses and self.level.level == 2:
                 self.bosses.append(
                     SkullBoss(
-                        self.win, self.player, (self.width / 2) - 32, -64, 64, 64, 100
+                        self.win,
+                        self.audio,
+                        self.player,
+                        (self.width / 2) - 32,
+                        -64,
+                        64,
+                        64,
                     )
                 )
-                
+                # Audio play boss bg
+                self.audio.play_bg(boss_audio=True)
+
             # Boss: boss health down if bullet touches the boss
             for boss in self.bosses:
                 for bullet_index, bullet in enumerate(self.bullets):
@@ -203,11 +211,15 @@ class Game:
                         self.bullets.pop(bullet_index)
                         # Health down
                         boss.health_down()
+                        # SFX
+                        self.audio.play_boss_damage()
 
             # Boss: player health down if boss touches the player
             for boss in self.bosses:
                 if self.player.collision.colliderect(boss.collision):
-                    self.level.health_down()
+                    self.level.health_down(boss.damage)
+                    # SFX
+                    self.audio.play_player_damage()
 
             # Game over if health is less than 0
             if self.level.health < 0:

@@ -1,5 +1,6 @@
 import pygame
 
+from .audio_manager import AudioManager
 from .player import Player
 from .utils import load_image
 
@@ -8,26 +9,32 @@ from .utils import load_image
 # 2. X start to end >< loop 5
 # 3. Detect player's X then attack
 
+# TODO
+# - [X] Speed
+# - [X] Boss fight bg music
+# - [X] SFXs: damage, and skull destroy sound for health bar
+
 
 class SkullBoss:
     def __init__(
         self,
         win: pygame.Surface,
+        audio: AudioManager,
         player: Player,
         x: float,
         y: float,
         width: int,
         height: int,
-        velocity: int,
     ) -> None:
         self.win = win
+        self.audio = audio
         self.player = player
         self.x = x
         self.y = y
         self.width = width
         self.height = height
-        self.velocity = velocity
         self.health = 100
+        self.damage = 100
 
         # Sprite
         self.sprite = load_image(
@@ -74,17 +81,17 @@ class SkullBoss:
 
         # HP
         if self.health > 80:
-            self.hp_count = 5
+            self.update_hp_count(5)
         elif self.health > 60:
-            self.hp_count = 4
+            self.update_hp_count(4)
         elif self.health > 40:
-            self.hp_count = 3
+            self.update_hp_count(3)
         elif self.health > 20:
-            self.hp_count = 2
+            self.update_hp_count(2)
         elif self.health > 0:
-            self.hp_count = 1
+            self.update_hp_count(1)
         else:
-            self.hp_count = 0
+            self.update_hp_count(0)
         # HP Bar
         for i in range(self.hp_count):
             i += 1
@@ -95,13 +102,13 @@ class SkullBoss:
         # +Y2 on every 50ms, for 60 counts
         if (
             self.stage == 1
-            and (pygame.time.get_ticks() - self.animation_last_change) >= 10
+            and (pygame.time.get_ticks() - self.animation_last_change) >= 50
         ):
             self.count += 1
             # Go down
-            self.y += 2
+            self.y += 1
             # Move to stage 2 if count is 60
-            if self.count == 60:
+            if self.count == 120:
                 self.stage = 2
                 # Reset count
                 self.count = 0
@@ -138,10 +145,10 @@ class SkullBoss:
         ):
             # Down: if count is even
             if self.count % 2 == 0:
-                self.y += 3
+                self.y += 8
             # Up: if count is odd
             if self.count % 2 == 1:
-                self.y -= 3
+                self.y -= 8
             # Reverse: if hit the bottom
             if self.y >= self.win.height - self.height:
                 self.count += 1
@@ -171,3 +178,12 @@ class SkullBoss:
         self.health -= 2
         # Blink
         self.is_blinking = True
+
+    def update_hp_count(self, count: int):
+        # Return: if not changed
+        if count == self.hp_count:
+            return
+        # Update
+        self.hp_count = count
+        # SFX
+        self.audio.play_boss_health_bar_skull_destroy()
