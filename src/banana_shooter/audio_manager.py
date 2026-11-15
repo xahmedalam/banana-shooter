@@ -38,6 +38,10 @@ class AudioManager:
         self.player_damage_last_change = pygame.time.get_ticks()
         self.sfxs.append(self.player_damage_sound)
 
+        # Bonus slurp
+        self.bonus_slurp_sound = pygame.mixer.Sound("src/assets/audio/bonus-slurp.ogg")
+        self.sfxs.append(self.bonus_slurp_sound)
+
         # Boss damage
         self.boss_damage_sound = pygame.mixer.Sound("src/assets/audio/boss-damage.ogg")
         self.sfxs.append(self.boss_damage_sound)
@@ -84,6 +88,9 @@ class AudioManager:
         if pygame.time.get_ticks() - self.player_damage_last_change >= 500:
             self.player_damage_sound.play()
             self.player_damage_last_change = pygame.time.get_ticks()
+
+    def play_bonus_slurp(self):
+        self.bonus_slurp_sound.play()
 
     def play_boss_damage(self):
         self.boss_damage_sound.play()

@@ -186,6 +186,8 @@ class Game:
                     self.level.health_up(bonus.bonus)
                     # Remove bonus
                     self.bonuses.pop(index)
+                    # SFX
+                    self.audio.play_bonus_slurp()
 
             # Boss add: if bosses list is empty and level 2 then add SkullBoss
             if not self.bosses and self.level.level == 2:
