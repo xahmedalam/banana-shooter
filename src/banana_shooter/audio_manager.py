@@ -68,9 +68,12 @@ class AudioManager:
             for sfx in self.sfxs:
                 sfx.set_volume(self.sfx_volume)
 
-    def play_bg(self, boss_audio: bool = False):
+    def play_bg(self, boss_audio: bool = False, win_audio: bool = False):
         if boss_audio:
             pygame.mixer.music.load("src/assets/audio/bg-boss-fight.ogg")
+            pygame.mixer.music.set_volume(1.0)
+        elif win_audio:
+            pygame.mixer.music.load("src/assets/audio/bg-win.ogg")
             pygame.mixer.music.set_volume(1.0)
         pygame.mixer.music.play(-1)
 

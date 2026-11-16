@@ -62,6 +62,9 @@ class Game:
         # Game over
         self.is_gameover = False
 
+        # You win!
+        self.is_youwin = False
+
     def run(self):
         self.running = True
 
@@ -161,6 +164,7 @@ class Game:
                 if (
                     self.player.collision.colliderect(enemy.collision)
                     and not self.is_gameover
+                    and not self.is_youwin
                 ):
                     self.level.health_down()
                     self.player.effect_blink()
@@ -190,7 +194,8 @@ class Game:
                     self.audio.play_bonus_slurp()
 
             # Boss add: if bosses list is empty and level 2 then add SkullBoss
-            if not self.bosses and self.level.level == 2:
+            # If You Win! than don't add
+            if not self.is_youwin and not self.bosses and self.level.level == 2:
                 self.bosses.append(
                     SkullBoss(
                         self.win,
@@ -218,7 +223,10 @@ class Game:
 
             # Boss: player health down if boss touches the player
             for boss in self.bosses:
-                if self.player.collision.colliderect(boss.collision):
+                if (
+                    self.player.collision.colliderect(boss.collision)
+                    and not self.is_gameover
+                ):
                     self.level.health_down(boss.damage)
                     # SFX
                     self.audio.play_player_damage()
@@ -226,6 +234,15 @@ class Game:
             # Game over if health is less than 0
             if self.level.health < 0:
                 self.is_gameover = True
+
+            # You win! if boss health is 0
+            for boss in self.bosses:
+                if boss.health == 0:
+                    self.is_youwin = True
+                    # Remove boss
+                    self.bosses = []
+                    # SFX
+                    self.audio.play_bg(win_audio=True)
 
             self.paint()
 
@@ -291,6 +308,21 @@ class Game:
             )
             self.win.blit(
                 text_surface, ((self.width - text_surface.get_width()) / 2, 355)
+            )
+
+        # You win! then draw you win image
+        if self.is_youwin:
+            youwin_img_scale = 10
+            youwin_img_width = 32 * youwin_img_scale
+            youwin_img_height = 17 * youwin_img_scale
+            self.win.blit(
+                load_image(
+                    "src/assets/img/you-win.png", (youwin_img_width, youwin_img_height)
+                ),
+                (
+                    (self.width - youwin_img_width) / 2,
+                    (self.height - youwin_img_height) / 2,
+                ),
             )
 
         # Update display
