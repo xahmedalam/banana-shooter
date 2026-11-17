@@ -1,3 +1,5 @@
+import random
+
 import pygame
 
 from .audio_manager import AudioManager
@@ -49,6 +51,7 @@ class SkullBoss:
         # Animation vars
         self.stage = 1
         self.count = 0
+        self.random_count = 4
         self.animation_last_change = pygame.time.get_ticks()
         # Effect vars
         self.effect_blink_count = 0
@@ -130,12 +133,14 @@ class SkullBoss:
             if self.x == 0 or self.x == self.win.width - self.width:
                 self.count += 1
 
-            # Attack: if count is greater then 5 and is_player_in_range
-            if self.count == 5 and self.is_player_in_range():
+            # Attack: if count is == random_count and is_player_in_range
+            if self.count == self.random_count and self.is_player_in_range():
                 # Stage up
                 self.stage = 3
                 # Reset count
                 self.count = 0
+                # Random count
+                self.random_count = random.randint(4, 5)
 
             self.animation_last_change = pygame.time.get_ticks()
         # 3. Attack and back
@@ -166,7 +171,17 @@ class SkullBoss:
         - Player: X100 + W64
         If Boss X is between 100 to 164 then return true
         """
-        if self.x >= self.player.x and self.x <= (self.player.x + self.player.width):
+        # Count 5 is left and 4 is right
+        # If coming from left to attack then check bossX is greater then playerX
+        # Or if coming from right to attack then check bossX is less then playerX
+        # print(f"RN {self.random_count} | BossX {self.x} | PlayerX {self.player.x}")
+        if (
+            self.random_count == 5
+            and self.x >= self.player.x
+            or self.random_count == 4
+            and self.x <= self.player.x
+        ):
+            # print("BOOM")
             return True
 
     def clamp(self):
