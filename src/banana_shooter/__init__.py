@@ -193,6 +193,11 @@ class Game:
                     # SFX
                     self.audio.play_bonus_slurp()
 
+            # Bonus: destroy if out of window
+            for index, bonus in enumerate(self.bonuses):
+                if bonus.y >= self.height:
+                    self.bonuses.pop(index)
+
             # Boss add: if bosses list is empty and level 2 then add SkullBoss
             # If You Win! than don't add
             if not self.is_youwin and not self.bosses and self.level.level == 2:
