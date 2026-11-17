@@ -54,7 +54,8 @@ class Game:
 
         # Bonuses
         self.bonuses: list[BananaShake] = []
-        self.bonuses_last_change = pygame.time.get_ticks()
+        self.banana_shake_random_ms = 1000 * 15
+        self.banana_shake_last_change = pygame.time.get_ticks()
 
         # Bosses
         self.bosses: list[SkullBoss] = []
@@ -170,15 +171,19 @@ class Game:
                     self.player.effect_blink()
                     self.audio.play_player_damage()
 
-            # Bonus: add 1 bonus on between 15s to 30s
+            # Bonus: add 1 bonus on between 15s to 20s
             if (
-                pygame.time.get_ticks() - self.bonuses_last_change
-            ) >= self.random_time_ms(15, 30):
+                pygame.time.get_ticks() - self.banana_shake_last_change
+            ) >= self.banana_shake_random_ms:
+                # print(f"RAN {self.banana_shake_random_ms}")
+                # Update random ms
+                self.banana_shake_random_ms = self.random_time_ms(15, 20)
+                # Add bonus
                 bonus = BananaShake(
                     self.win, self.random_x(), -32.0, 32, 32, self.bonus_velocity
                 )
                 self.bonuses.append(bonus)
-                self.bonuses_last_change = pygame.time.get_ticks()
+                self.banana_shake_last_change = pygame.time.get_ticks()
 
             # Bonus: health up if player touches the bonus
             for index, bonus in enumerate(self.bonuses):
