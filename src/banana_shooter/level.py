@@ -14,6 +14,9 @@ class Level:
         self.level_text_color = (0, 128, 0)
         self.score_text_color = (128, 0, 128)
 
+        # BonusFireBoost
+        self.hits_count = 0
+
         # Load font
         try:
             self.font = pygame.font.Font("src/assets/font/PixelifySans-Medium.ttf", 20)
@@ -59,6 +62,8 @@ class Level:
         # Level up
         if self.score == 5:
             self.level = 2
+        # BonusFireBoost
+        self.hits_count += 1
 
     def health_up(self, value: int):
         if self.health == 100:
@@ -78,3 +83,4 @@ class Level:
     def reset(self):
         self.health = 100
         self.score = 0
+        self.hits_count = 0

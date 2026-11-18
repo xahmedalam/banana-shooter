@@ -4,6 +4,7 @@ import pygame
 
 from .audio_manager import AudioManager
 from .banana_shake import BananaShake
+from .bonus_fire_boost import BonusFireBoost
 from .bullet import Bullet
 from .enemy import Enemy
 from .level import Level
@@ -34,7 +35,8 @@ class Game:
         self.player_velocity = 400
         self.bullet_velocity = 400
         self.enemy_velocity = 250
-        self.rate_of_fire = 2  # Fires per second
+        self.orignal_rate_of_fire = 2  # Fires per second
+        self.rate_of_fire = self.orignal_rate_of_fire
         self.rate_of_enemies = 1.5  # Enemies per second
         self.bonus_velocity = 150
 
@@ -53,9 +55,11 @@ class Game:
         self.enemy_last_change = pygame.time.get_ticks()
 
         # Bonuses
-        self.bonuses: list[BananaShake] = []
+        self.bonuses: list[BananaShake | BonusFireBoost] = []
         self.banana_shake_random_ms = 1000 * 15
         self.banana_shake_last_change = pygame.time.get_ticks()
+        self.bonus_fire_boost_life_ms = 6000
+        self.bonus_fire_boost_last_change = pygame.time.get_ticks()
 
         # Bosses
         self.bosses: list[SkullBoss] = []
@@ -171,7 +175,7 @@ class Game:
                     self.player.effect_blink()
                     self.audio.play_player_damage()
 
-            # Bonus: add 1 bonus on between 15s to 20s
+            # Bonus BananaShake: add 1 bonus on between 15s to 20s
             if (
                 pygame.time.get_ticks() - self.banana_shake_last_change
             ) >= self.banana_shake_random_ms:
@@ -185,10 +189,11 @@ class Game:
                 self.bonuses.append(bonus)
                 self.banana_shake_last_change = pygame.time.get_ticks()
 
-            # Bonus: health up if player touches the bonus
+            # Bonus BananaShake: health up if player touches the bonus
             for index, bonus in enumerate(self.bonuses):
                 if (
-                    self.player.collision.colliderect(bonus.collision)
+                    isinstance(bonus, BananaShake)
+                    and self.player.collision.colliderect(bonus.collision)
                     and not self.is_gameover
                 ):
                     # Health up
@@ -197,6 +202,38 @@ class Game:
                     self.bonuses.pop(index)
                     # SFX
                     self.audio.play_bonus_slurp()
+
+            # BonusFireBoost: if already boosted then reset hits to 0
+            if self.rate_of_fire != self.orignal_rate_of_fire:
+                self.level.hits_count = 0
+
+            # BonusFireBoost: add 1 on every 10 hits
+            if self.level.hits_count == 10:
+                bonus = BonusFireBoost(
+                    self.win, self.random_x(), -32.0, 32, 32, self.bonus_velocity
+                )
+                self.bonuses.append(bonus)
+                # Reset hits
+                self.level.hits_count = 0
+
+            # BonusFireBoost: boost if player touches bonus
+            for index, bonus in enumerate(self.bonuses):
+                if isinstance(
+                    bonus, BonusFireBoost
+                ) and self.player.collision.colliderect(bonus.collision):
+                    # Boost
+                    self.rate_of_fire = bonus.rate_of_fire_boost
+                    # Remove bonus
+                    self.bonuses.pop(index)
+                    # Update for life
+                    self.bonus_fire_boost_last_change = pygame.time.get_ticks()
+
+            # BonusFireBoost: after 5s back to orignal_rate_of_fire
+            if (
+                pygame.time.get_ticks() - self.bonus_fire_boost_last_change
+                >= self.bonus_fire_boost_life_ms
+            ):
+                self.rate_of_fire = self.orignal_rate_of_fire
 
             # Bonus: destroy if out of window
             for index, bonus in enumerate(self.bonuses):
@@ -224,6 +261,8 @@ class Game:
             for boss in self.bosses:
                 for bullet_index, bullet in enumerate(self.bullets):
                     if boss.collision.colliderect(bullet.collision):
+                        # Score up
+                        self.level.score_up()
                         # Remove bullet
                         self.bullets.pop(bullet_index)
                         # Health down
