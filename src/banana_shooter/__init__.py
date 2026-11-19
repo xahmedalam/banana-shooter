@@ -12,6 +12,10 @@ from .player import Player
 from .skull_boss import SkullBoss
 from .utils import load_image
 
+# TODO
+# - [x] Fire boost time line
+# - [ ] Shield
+
 
 class Game:
     def __init__(self) -> None:
@@ -225,6 +229,8 @@ class Game:
                     self.rate_of_fire = bonus.rate_of_fire_boost
                     # Remove bonus
                     self.bonuses.pop(index)
+                    # Start life line
+                    self.level.start_fire_boost_life_line(self.bonus_fire_boost_life_ms)
                     # Update for life
                     self.bonus_fire_boost_last_change = pygame.time.get_ticks()
 

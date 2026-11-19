@@ -14,9 +14,6 @@ class Level:
         self.level_text_color = (0, 128, 0)
         self.score_text_color = (128, 0, 128)
 
-        # BonusFireBoost
-        self.hits_count = 0
-
         # Load font
         try:
             self.font = pygame.font.Font("src/assets/font/PixelifySans-Medium.ttf", 20)
@@ -31,6 +28,25 @@ class Level:
 
         # Star
         self.star_sprite = load_image("src/assets/img/star.png", (24, 24))
+
+        # BonusFireBoost
+        self.hits_count = 0
+        # Life line
+        self.banana_life_ms = 0
+        self.banana_life_count = 0
+        self.banana_life_last_change = pygame.time.get_ticks()
+        # Sprite
+        self.banana_sprite_strip_count = 3
+        self.banana_sprite = create_sprite_sheet(
+            "src/assets/img/banana2-strip3.png",
+            self.banana_sprite_strip_count,
+            (20, 20),
+            (24, 24),
+        )
+        # Animation vars
+        self.banana_sprite_animation_speed = 3
+        self.banana_sprite_current_frame_index = 0
+        self.banana_sprite_animation_last_change = pygame.time.get_ticks()
 
     def draw(self):
         # Health
@@ -56,6 +72,35 @@ class Level:
         # Star for levels
         for i in range(self.level):
             self.win.blit(self.star_sprite, (6 + (26 * i), 6 + 24))
+
+        # BonusFireBoost: run for 4 times with 1000ms gap
+        if (
+            self.banana_life_count != 0
+            and pygame.time.get_ticks() - self.banana_life_last_change
+            >= self.banana_life_ms / 4
+        ):
+            # Minus count
+            self.banana_life_count -= 1
+            self.banana_life_last_change = pygame.time.get_ticks()
+
+        # BonusFireBoost life line
+        for i in range(self.banana_life_count):
+            self.win.blit(
+                self.banana_sprite[self.banana_sprite_current_frame_index],
+                (6 + (26 * i), 6 + (24 * 2)),
+            )
+
+        # BonusFireBoost animation
+        if (
+            pygame.time.get_ticks() - self.banana_sprite_animation_last_change
+            >= (1000 / self.banana_sprite_strip_count)
+            / self.banana_sprite_animation_speed
+        ):
+            self.banana_sprite_current_frame_index += 1
+            # Back to 0 if frames end
+            if self.banana_sprite_current_frame_index == self.banana_sprite_strip_count:
+                self.banana_sprite_current_frame_index = 0
+            self.banana_sprite_animation_last_change = pygame.time.get_ticks()
 
     def score_up(self):
         self.score += 1
@@ -84,3 +129,8 @@ class Level:
         self.health = 100
         self.score = 0
         self.hits_count = 0
+
+    def start_fire_boost_life_line(self, life_ms: int):
+        self.banana_life_ms = life_ms
+        self.banana_life_count = 4
+        self.banana_life_last_change = pygame.time.get_ticks()
