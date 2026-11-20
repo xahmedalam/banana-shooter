@@ -1,8 +1,14 @@
 # Banana Shooter
 
-It's a 2d game where you are a monkey and your target is to kill the bats and doge.
+It's a 2d game where you are a monkey and your target is to kill the skull bose and save the jungle.
 
-<img width="1600" height="900" alt="image" src="https://github.com/user-attachments/assets/3af44a8e-dd1c-4612-9cf3-e769ce31b4cc" />
+<img width="1200" height="675" alt="image" src="https://github.com/user-attachments/assets/10dc7ed8-cd50-48b8-8e6d-543339a03986" />
+
+https://github.com/user-attachments/assets/d6c76714-89e0-4ca0-8af6-f6906b46ad00
+
+## Download
+
+[Latest Release](https://github.com/xahmedalam/banana-shooter/releases/latest)
 
 ## Installation
 
