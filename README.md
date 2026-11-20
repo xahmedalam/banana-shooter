@@ -28,3 +28,9 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 ```shell
 uv run banana-shooter
 ```
+
+## Controls
+
+- Move: UP, DOWN, LEFT, RIGHT
+- Fire: SPACE BAR
+- Continue: ENTER or RETURN key
