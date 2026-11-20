@@ -12,10 +12,6 @@ from .player import Player
 from .skull_boss import SkullBoss
 from .utils import load_image
 
-# TODO
-# - [x] Fire boost time line
-# - [ ] Shield
-
 
 class Game:
     def __init__(self) -> None:
@@ -140,7 +136,8 @@ class Game:
 
             # Enemy: add an enemy on every 1000ms / rate_of_enemy
             if (
-                pygame.time.get_ticks() - self.enemy_last_change
+                not self.is_youwin
+                and pygame.time.get_ticks() - self.enemy_last_change
                 >= 1000 / self.rate_of_enemies
             ):
                 enemy = Enemy(
@@ -181,7 +178,8 @@ class Game:
 
             # Bonus BananaShake: add 1 bonus on between 15s to 20s
             if (
-                pygame.time.get_ticks() - self.banana_shake_last_change
+                not self.is_youwin
+                and pygame.time.get_ticks() - self.banana_shake_last_change
             ) >= self.banana_shake_random_ms:
                 # print(f"RAN {self.banana_shake_random_ms}")
                 # Update random ms
@@ -378,6 +376,13 @@ class Game:
                     (self.width - youwin_img_width) / 2,
                     (self.height - youwin_img_height) / 2,
                 ),
+            )
+            # Score text
+            text_surface = self.level.font.render(
+                f"your score: {self.level.score}", True, (0, 0, 0)
+            )
+            self.win.blit(
+                text_surface, ((self.width - text_surface.get_width()) / 2, 355)
             )
 
         # Update display
